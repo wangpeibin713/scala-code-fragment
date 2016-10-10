@@ -6,37 +6,27 @@ import scala.annotation.tailrec
   * Created by admin on 2016/10/10.
   */
 object AsciiDisplay {
+
   case class TreeNode[T](data: T, children: Seq[TreeNode[T]] = Nil)
+
   def asciiDisplay(root: TreeNode[String]): Seq[String] = {
     asciiDisplay(root, true)
   }
-/*
-  def asciiDisplay(node: TreeNode[String], prefix: String ): Seq[String] = {
-    if(node.children == Nil) Seq(s"+-${node.data}")
-    else  {
+
+  def asciiDisplay(node: TreeNode[String], isLastChildren: Boolean): Seq[String] = {
+    if (node.children == Nil) Seq(s"+-${node.data}")
+    else {
       val init = node.children.init
       val last = node.children.last
-      init.foldLeft( Seq(s"+-${node.data}"))((x,y)=>{
-        val temp = asciiDisplay(y, "| ").map(s=>prefix+s)
-        val lastStr:Option[String] = if(temp.size > 1 ) Some("  |") else None
-        x ++ temp ++ lastStr
-      }) ++ asciiDisplay(last,"  ").map(s=>prefix+s)
+      val prefix = if (!isLastChildren) "| " else "  "
+      val lastItem = if (!isLastChildren) Some("| ") else None
+      init.foldLeft(Seq(s"+-${node.data}"))((x, y) => {
+        val temp = asciiDisplay(y, false).map(s => prefix + s)
+        x ++ temp
+      }) ++ asciiDisplay(last, true).map(s => prefix + s) ++ lastItem
     }
   }
- */
-def asciiDisplay(node: TreeNode[String], isLastChildren: Boolean ): Seq[String] = {
-  if(node.children == Nil) Seq(s"+-${node.data}")
-  else  {
-    val init = node.children.init
-    val last = node.children.last
-    val prefix = if(!isLastChildren) "| " else "  "
-    val lastItem = if(!isLastChildren) Some("| ") else None
-    init.foldLeft( Seq(s"+-${node.data}"))((x,y)=>{
-      val temp = asciiDisplay(y, false).map(s=>prefix+s)
-      x ++ temp
-    }) ++ asciiDisplay(last,true).map(s=>prefix+s) ++ lastItem
-  }
-}
+
   def main(args: Array[String]): Unit = {
     asciiDisplay(TreeNode("Root",
       children = List(
